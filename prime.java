@@ -11,8 +11,13 @@ import java.util.stream.Stream;
 
 
 class Prime {
+
     /**
      * Checks if the given number is a prime.
+     *
+     * @param number The number to check primality of.
+     *
+     * @return True if the number is a prime, or false otherwise.
      */
     private static boolean isPrime(int number) {
         // 1 is odd, but not a prime.
@@ -51,6 +56,11 @@ class Prime {
 
     /**
      * Computes the primes ranging from the low up to and including the high value.
+     *
+     * @param low The range's lower bound (inclusive).
+     * @param high The range's upper bound (inclusive).
+     *
+     * @return An integer stream of all prime numbers in the given range.
      */
     public static Stream<Integer> compute(int low, int high) {
         // The indicated range must be positive and go from low to high.
@@ -68,6 +78,9 @@ class Prime {
 
     /**
      * Prints the primes ranging from the low up to and including the high value.
+     *
+     * @param low The range's lower bound (inclusive).
+     * @param high The range's upper bound (inclusive).
      */
     public static void printComputed(int low, int high) {
         compute(low, high).forEach(prime -> System.out.println(prime));
@@ -75,6 +88,15 @@ class Prime {
 
     /**
      * Computes the primes ranging from the low up to and including the high value, in parallel.
+     *
+     * @param low The range's lower bound (inclusive).
+     * @param high The range's upper bound (inclusive).
+     * @param cores The number of cores to distribute the computation to.
+     *
+     * @return An integer stream of all prime numbers in the given range.
+     *
+     * @throws java.lang.InterruptedException Thrown if the parallel computation is interrupted.
+     * @throws java.util.concurrent.ExecutionException Thrown if the parallel computation errors.
      */
     public static Stream<Integer> compute(int low, int high, int cores) throws InterruptedException, ExecutionException {
         // Build the computation as usual, but configure it to be run in parallel. Then collect the values to terminate
@@ -91,8 +113,15 @@ class Prime {
 
     /**
      * Prints the primes ranging from the low up to and including the high value, in parallel.
+     *
+     * @param low The range's lower bound (inclusive).
+     * @param high The range's upper bound (inclusive).
+     *
+     * @throws java.lang.InterruptedException Thrown if the parallel computation is interrupted.
+     * @throws java.util.concurrent.ExecutionException Thrown if the parallel computation errors.
      */
     public static void printComputed(int low, int high, int cores) throws InterruptedException, ExecutionException {
         compute(low, high, cores).forEach(prime -> System.out.println(prime));
     }
+
 }
