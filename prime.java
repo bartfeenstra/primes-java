@@ -1,5 +1,9 @@
+import java.lang.InterruptedException;
 import java.lang.Math;
 import java.util.Collections;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -71,15 +75,15 @@ class Prime {
 
     /**
      * Computes the primes ranging from the low up to and including the high value, in parallel.
-     *
-     * @todo I have not yet found out how to explicitly configure the number of cores parallel stream operations should
-     *   use. Stream.parallel() does not take any configuration, and the documentation does not hint that any might be
-     *   available.
      */
-    public static Stream<Integer> compute(int low, int high, int cores) {
+    public static Stream<Integer> compute(int low, int high, int cores) throws InterruptedException, ExecutionException {
         // Build the computation as usual, but configure it to be run in parallel. Then collect the values to terminate
         // the stream, and block on all parallel operations being completed.
-        List<Integer> integers =  compute(low, high).parallel().collect(Collectors.toList());
+        ForkJoinPool pool = new ForkJoinPool(cores);
+        ForkJoinTask<List<Integer>> task = pool.submit(() -> {
+            return compute(low, high).parallel().collect(Collectors.toList());
+        });
+        List<Integer> integers = task.get();
         // Parallel execution returns results in an unpredictable order, so sort them.
         Collections.sort(integers);
         return integers.stream();
@@ -88,7 +92,7 @@ class Prime {
     /**
      * Prints the primes ranging from the low up to and including the high value, in parallel.
      */
-    public static void printComputed(int low, int high, int cores) {
+    public static void printComputed(int low, int high, int cores) throws InterruptedException, ExecutionException {
         compute(low, high, cores).forEach(prime -> System.out.println(prime));
     }
 }
